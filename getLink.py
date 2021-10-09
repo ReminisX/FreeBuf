@@ -22,7 +22,7 @@ def getResponose(url):
     return response
 
 
-# 多线程任务函数，爬取序号从start到end的网页信息
+# 信息爬取函数
 def getInformation(start, end):
     # 循环从url池中获取数据，并爬取相关信息
     for i in range(start, end):
@@ -35,13 +35,25 @@ def getInformation(start, end):
             print("序号{0}未爬取到数据".format(i))
         else:
             bs = BeautifulSoup(response.text, features='html.parser')
+            # github链接爬取
             github_link = bs.find_all('a', {'href': re.compile('https://github.com*')})
+            # 项目名称爬取
+            paperNameObj = bs.find(name='span', attrs={"class": "title-span"})
+            # 空值判断
+            if paperNameObj is None:
+                peperName = ""
+            else:
+                paperName = paperNameObj.text
             if len(github_link) >= 1:
                 github_url = github_link[0]['href']
             else:
                 github_url = ""
+            # 结果打印
             print("爬取到的github链接为: " + str(github_url))
+            print("项目名称是{0}".format(paperName))
+            # 数据存储
             myDataBase.updateElementBySerial("github_url", github_url, i)
+            myDataBase.updateElementBySerial("paper_name", paperName, i)
 
 
 dataBaseSize = myDataBase.getSize()

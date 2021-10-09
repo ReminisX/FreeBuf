@@ -1,12 +1,11 @@
-
 # 更改url为GitHub的api
 import json
-
 import requests
 
 from MyDataBase import MyDataBase
 
 
+# 根据GitHub项目地址生成api
 def changeUrl(url):
     strs = url.split("/")
     l = len(strs)
@@ -19,8 +18,8 @@ def changeUrl(url):
 myDataBase = MyDataBase()
 dataBaseSize = myDataBase.getSize()
 
-for i in range(1, dataBaseSize+1):
-    print("="*50)
+for i in range(1, dataBaseSize + 1):
+    print("=" * 50)
     githubUrl = myDataBase.getElementBySerial("github_url", i)
     if githubUrl is None or len(githubUrl) <= 0:
         print("序列{0}无GitHub项目".format(i))

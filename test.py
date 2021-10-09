@@ -1,17 +1,7 @@
-import json
-
 import requests
-url = "https://github.com/boy-hack"
-r = requests.get("https://api.github.com/repos/MichaelGrafnetter/DSInternals")
-d = json.loads(r.text)
+from bs4 import BeautifulSoup
 
-def changeUrl(url):
-    strs = url.split("/")
-    l = len(strs)
-    res = strs[0] + "//" + "api." + strs[2] + "/repos/"
-    for i in range(3, l):
-        res = res + strs[i] + "/"
-    return res
-
-print(changeUrl(url))
-print(d.get('name'))
+r = requests.get("https://www.freebuf.com/sectool/289235.html")
+bs = BeautifulSoup(r.text, features='html.parser')
+l = bs.find(name='span', attrs={"class": "title-span"}).text
+print(l)
