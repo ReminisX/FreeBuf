@@ -15,6 +15,18 @@ class MyDataBase:
     def close(self):
         self.db.close()
 
+    def getSize(self):
+        sql = 'SELECT count(*) FROM freebuf_table'
+        try:
+            # 执行sql语句
+            self.cursor.execute(sql)
+            # 提交到数据库执行
+            self.db.commit()
+            res = self.cursor.fetchall()[0][0]
+            return res
+        except:
+            self.db.rollback()
+
     # 向freebuf_table中插入一个元素
     def insertElement(self, element_name, element):
         sql = 'insert into freebuf_table({0}) value("{1}")'.format(element_name, element)
@@ -39,24 +51,45 @@ class MyDataBase:
             data = self.cursor.fetchall()
             for d in data:
                 res.append(d[0])
-            print("select success")
         except:
-            print('select error')
             self.db.rollback()
         return res
 
     # 通过序号获取单一元素
     def getElementBySerial(self, element, serial):
-        sql = 'select {0} from freebuf_table where serial == {1}'.format(element, serial)
+        sql = 'select {0} from freebuf_table where serial={1}'.format(element, serial)
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+            data = self.cursor.fetchall()[0][0]
+        except:
+            self.db.rollback()
+        return data
+
+    # 通过序列号插入元素
+    def updateElementBySerial(self, element, value, serial):
+        sql = 'update freebuf_table set {0}="{1}" where serial={2}'.format(element, value, serial)
         try:
             self.cursor.execute(sql)
             self.db.commit()
             data = self.cursor.fetchall()
-            print("select success")
         except:
-            print('select error')
             self.db.rollback()
         return data
+
+    # 获取单列全部信息
+    def getColumn(self, column):
+        res = []
+        sql = 'select {0} from freebuf_table'.format(column)
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+            data = self.cursor.fetchall()
+            for d in data:
+                res.append(d[0])
+        except:
+            self.db.rollback()
+        return res
 
     # 获取全部信息，以list形式返回
     def getAllInformation(self):
@@ -68,8 +101,6 @@ class MyDataBase:
             data = self.cursor.fetchall()
             for d in data:
                 res.append(d[0])
-            print("select success")
         except:
-            print('select error')
             self.db.rollback()
         return res
