@@ -15,10 +15,8 @@ ua = UserAgent()
 
 def getResponose(url):
     header = {"user-agent": ua.random}
-    print(header)
     try:
         response = requests.get(url, headers=header)
-        time.sleep(1)
     except:
         print("{0}访问失败".format(url))
     return response
