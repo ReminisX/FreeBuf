@@ -18,7 +18,6 @@ def getResponose(url):
     print(header)
     try:
         response = requests.get(url, headers=header)
-        time.sleep(1)
     except:
         print("{0}访问失败".format(url))
     return response
@@ -46,5 +45,22 @@ def getInformation(start, end):
             myDataBase.updateElementBySerial("github_url", github_url, i)
 
 
+# 设置最大线程数
+POOL_SIZE = 10
+pool = ThreadPoolExecutor(max_workers=POOL_SIZE)
+# 根据线程数切分任务
 dataBaseSize = myDataBase.getSize()
-getInformation(1, dataBaseSize+1)
+k = int(dataBaseSize / POOL_SIZE)
+start = 1
+for i in range(1, POOL_SIZE):
+    pool.submit(getInformation, start, start+k)
+    s = "******线程{0}正在执行[{1}, {2}]任务段******".format(i, start, start+k)
+    print("*" * (len(s) + 5))
+    print(s)
+    print("*" * (len(s) + 5))
+    start += k
+pool.submit(start, dataBaseSize+1)
+fs = "******线程{0}正在执行[{1}, {2}]任务段******".format(POOL_SIZE, start, dataBaseSize)
+print("*" * (len(fs) + 5))
+print(s)
+print("*" * (len(fs) + 5))
