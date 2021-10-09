@@ -30,6 +30,7 @@ for i in range(1, dataBaseSize+1):
         d = json.loads(r.text)
         if d.get('name') is None or d.get('watchers') is None:
             print("序号{0}无法查询到详细信息,项目地址为{1}".format(i, githubUrl))
+            print(d.get('message'))
         else:
             name = d['name']
             star = d['watchers']
