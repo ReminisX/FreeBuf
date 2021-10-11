@@ -1,12 +1,13 @@
-from flask import Flask
 import json
+
 import numpy as np
-from MyDataBase import MyDataBase
+from flask import Flask
+
+from MyServer import MyServer
 
 app = Flask(__name__)
-app.config["JSON_AS_ASCII"] = False
-myDataBase = MyDataBase()
-
+app.config['JSON_AS_ASCII'] = False
+myServer = MyServer()
 
 # list转成Json格式数据
 def listToJson(lst):
@@ -16,19 +17,13 @@ def listToJson(lst):
     return str_json
 
 
-@app.route("/", methods=["GET"])
-def hello_world():
-    return "<p>Hello, World!</p>"
+@app.route("/search/<projectName>", methods=["GET"])
+def searchInformationByProjectName(projectName):
+    res = myServer.searchPaper(projectName)
+    return res
 
 
-@app.route("/AllUrls", methods=["GET"])
-def getAllUrls():
-    res = myDataBase.getAllUrl()
-    return listToJson(res)
-
-
-if __name__ == '__main__':
-    host = "127.0.0.1"
-    port = 5000
-    app.debug = True
-    app.run(host, port)
+host = "127.0.0.1"
+port = 5000
+app.debug = True
+app.run(host, port)

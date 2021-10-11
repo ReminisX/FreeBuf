@@ -11,6 +11,7 @@ class MyDataBase:
                                   db="freebuf",
                                   charset='utf8')
         self.cursor = self.db.cursor()
+
     # 关闭数据库
     def close(self):
         self.db.close()
@@ -101,6 +102,35 @@ class MyDataBase:
             data = self.cursor.fetchall()
             for d in data:
                 res.append(d[0])
+        except:
+            self.db.rollback()
+        return res
+
+    # 获取数据库表结构
+    def getStructure(self, dataBase, tableName):
+        res = []
+        sql = "SELECT column_name FROM information_schema.`COLUMNS` where TABLE_SCHEMA = '{0}' and TABLE_NAME = '{1}'".format(
+            dataBase, tableName)
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+            data = self.cursor.fetchall()
+            for d in data:
+                res.append(d[0])
+        except:
+            self.db.rollback()
+        return res
+
+    # 模糊查找信息
+    def selectLike(self, element, name):
+        res = []
+        sql = 'select * from freebuf_table where {0} like "%{1}%"'.format(element, name)
+        try:
+            self.cursor.execute(sql)
+            self.db.commit()
+            data = self.cursor.fetchall()
+            for d in data:
+                res.append(d)
         except:
             self.db.rollback()
         return res
